@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ImageSecureBox</string>
+    <string name="welcome">Welcome to ImageSecureBox! \nFetching online image...</string>
 </resources>
