@@ -85,10 +85,13 @@ public class SecureImageService {
 
         checkNetworkConnection();
 
-        Logger.d("Kickoff to show secure image from " + url);
         SecureImageWorker task = new SecureImageWorker(mContext, url);
-        // TODO
-        mThreadPoolExecutor.submit(task);
+        if (mThreadPoolExecutor.getQueue().contains(task)) {
+            Logger.d("Task already in the pool, defer submit it..");
+        } else {
+            Logger.d("Kickoff to show secure image from " + url);
+            mThreadPoolExecutor.submit(task);
+        }
     }
 
     private void checkNetworkConnection() {
@@ -118,13 +121,13 @@ public class SecureImageService {
                 if (bitmap != null) {
                     // 3. convert to webp
                     byte[] webpData = convertToWebp(bitmap);
-                    bitmap.recycle();
 
                     if (webpData != null) {
                         // 4. encrypt the image data and save it to disk
                         encryptImage(webpData);
 
                         // 5. decrypt
+                        bitmap.recycle();
                         bitmap = decryptFromDisk();
                     }
                 } else {
@@ -139,6 +142,8 @@ public class SecureImageService {
             } else {
                 Logger.e("Failed to fetch bitmap anyway...");
             }
+
+            Logger.d("ThreadPool status:" + mThreadPoolExecutor);
         }
 
         // 4.0以上系统原生支持webp格式,4.0以下系统需要使用libweb库来添加webp媒体类型支持
@@ -168,6 +173,7 @@ public class SecureImageService {
         }
 
         // TODO: handle OOM
+        // 使用流加密
         private Bitmap decryptFromDisk() {
             byte[] encryptBytes = mDiskLruCache.loadFromCache(mUrl);
             if (encryptBytes == null) {
@@ -269,6 +275,22 @@ public class SecureImageService {
             } catch (IOException e) {
                 throw new RuntimeException("Failed to get passphase!");
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            SecureImageWorker that = (SecureImageWorker) o;
+
+            return mUrl != null ? mUrl.equals(that.mUrl) : that.mUrl == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return mUrl != null ? mUrl.hashCode() : 0;
         }
     }
 

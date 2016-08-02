@@ -51,22 +51,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mSecureImageView = (ImageView) findViewById(R.id.secure_image);
 
+
         mSecureImageService = SecureImageService.getInstance(getApplicationContext());
+        // 可用EventBus来进行组件间通信
+        mSecureImageService.registerNotifyCallback(mCallback);
         mSecureImageService.fetchSecureImage(REGULAR_RESOLUTION_IMAGE);
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // 可用EventBus来进行组件间通信
-        mSecureImageService.registerNotifyCallback(mCallback);
     }
 
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
         mSecureImageService.removeNotifyCallback(mCallback);
-        super.onPause();
+        super.onDestroy();
     }
 }

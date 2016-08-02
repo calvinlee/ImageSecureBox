@@ -19,6 +19,8 @@ import static android.content.ContentValues.TAG;
 
 /**
  * Created by calvin on 8/1/16.
+ * http://android-developers.blogspot.com/2016/06/security-crypto-provider-deprecated-in.html
+ * https://nelenkov.blogspot.com/2012/04/using-password-based-encryption-on.html
  */
 
 public class Crypto {
@@ -37,6 +39,8 @@ public class Crypto {
     private Crypto() {
     }
 
+    // https://helpdesk.lastpass.com/account-settings/general/password-iterations-pbkdf2/
+    // https://en.wikipedia.org/wiki/PBKDF2
     public static SecretKey deriveKeyPbkdf2(byte[] salt, String password) {
         try {
             long start = System.currentTimeMillis();
