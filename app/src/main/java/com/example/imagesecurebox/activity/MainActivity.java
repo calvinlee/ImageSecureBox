@@ -17,6 +17,9 @@ import com.orhanobut.logger.Logger;
  * Created by calvin on 8/1/16.
  */
 public class MainActivity extends AppCompatActivity {
+    private static final String EXTRA_HIGH_RESOLUTION_IMAGE = "http://img0.paimaihui.net/images/guardian/2012/06/18/1663-1.jpg";
+    private static final String REGULAR_RESOLUTION_IMAGE = "http://tanqisen.github.io/images/Lena.jpg";
+
     private SecureImageService mSecureImageService;
     private ImageView mSecureImageView;
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mSecureImageView = (ImageView) findViewById(R.id.secure_image);
 
         mSecureImageService = SecureImageService.getInstance(getApplicationContext());
-        mSecureImageService.fetchSecureImage("http://tanqisen.github.io/images/Lena.jpg");
+        mSecureImageService.fetchSecureImage(REGULAR_RESOLUTION_IMAGE);
     }
 
 

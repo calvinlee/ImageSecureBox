@@ -6,10 +6,10 @@ import android.util.LruCache;
 import com.example.imagesecurebox.util.Md5;
 
 public class ImageLruCache extends LruCache<String, Bitmap> {
-    public static int cacheSize = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
+    public static final int CACHE_SIZE = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
 
     public ImageLruCache() {
-        super(cacheSize);
+        super(CACHE_SIZE);
     }
 
     @Override
@@ -18,9 +18,7 @@ public class ImageLruCache extends LruCache<String, Bitmap> {
     }
 
     public void addToCache(String url, Bitmap bitmap) {
-        if (loadFromCache(url) == null) {
-            put(url, bitmap);
-        }
+        put(Md5.hashKeyFor(url), bitmap);
     }
 
     public Bitmap loadFromCache(String url) {

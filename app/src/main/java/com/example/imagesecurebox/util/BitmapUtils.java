@@ -14,24 +14,30 @@ import java.io.OutputStream;
  * Created by calvin on 8/1/16.
  */
 public class BitmapUtils {
+    private static final float MAX_BITMAP_SIZE = 2048f;
+
     public static int calculateInSampleSize(BitmapFactory.Options options,
-                                      int reqWidth, int reqHeight) {
+                                            int reqWidth, int reqHeight) {
         if (reqWidth == 0 || reqHeight == 0) {
             return 1;
         }
 
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        Logger.d("origin, w= " + width + " h=" + height);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        Logger.d("origin, w= " + width + " h=" + height + " reqwidth= " + reqWidth + " reqHeight=" + reqHeight);
 
         int inSampleSize = 1;
         if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+            while (height / 2 >= reqHeight && width / 2 >= reqWidth) {
                 inSampleSize *= 2;
+                height /= 2;
+                width /= 2;
             }
+        }
+
+        int maxDimension = Math.max(height, width);
+        while (maxDimension / inSampleSize > MAX_BITMAP_SIZE) {
+            inSampleSize++;
         }
 
         Logger.d("sampleSize:" + inSampleSize);

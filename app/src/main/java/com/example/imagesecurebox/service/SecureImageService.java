@@ -67,7 +67,7 @@ public class SecureImageService {
         int number_of_cores = Runtime.getRuntime().availableProcessors();
         mThreadPoolExecutor = new ThreadPoolExecutor(
                 number_of_cores,
-                number_of_cores,
+                number_of_cores * 4,
                 1,
                 TimeUnit.MINUTES,
                 new ArrayBlockingQueue<Runnable>(number_of_cores, true));
@@ -214,6 +214,16 @@ public class SecureImageService {
                 urlConnection = openConnection(imageUrl);
                 in = urlConnection.getInputStream();
                 options.inJustDecodeBounds = false;
+
+                // TODO improve this
+                options.inPurgeable = true;
+                /*
+                try {
+                    BitmapFactory.Options.class.getField("inNativeAlloc").setBoolean(options, true);
+                } catch (IllegalAccessException e) {
+                    // ignore
+                }*/
+
                 return BitmapFactory.decodeStream(in, null, options);
             } catch (MalformedURLException e) {
                 Logger.e(e, "Invalid URL");
